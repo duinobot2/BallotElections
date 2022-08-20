@@ -12,7 +12,6 @@ import utility.ElGamalDec;
 import utility.ElGamalEnc;
 import utility.ElGamalGen;
 import utility.ElGamalPK;
-import utility.ElGamalSK;
 
 /**
  *
