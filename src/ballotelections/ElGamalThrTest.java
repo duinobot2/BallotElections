@@ -48,7 +48,7 @@ public class ElGamalThrTest {
         
         ElGamalCT CT1 = voter1.encryptInTheExponent(M1); // CT1 encrypts 24
         ElGamalCT CT2 = voter2.encryptInTheExponent(M2); // CT2 encrypts 14
-        
+             
         ElGamalCT CTH = Homomorphism(PK, CT1, CT2); // CTH encrypts the sum of the plaintexts in CT1 and CT2 that is 24+14
         
         ElGamalCT DecCT=CTH;
@@ -59,6 +59,18 @@ public class ElGamalThrTest {
         BigInteger D = urna[2].decryptInTheExponent(DecCT); // finally the third authority
         // uses the standard decryption procedure to recover the message
         System.out.println("decrypted plaintext with threshold El Gamal = " + D + "\n"); // it should print the same integer as before
+        
+        //soluzione 2 con doppio omomorfismo
+        ElGamalCT DecCT1 = urna[0].partialDecrypt(CT1);
+        DecCT1 = urna[1].partialDecrypt(DecCT1);
+        ElGamalCT DecCT2 = urna[0].partialDecrypt(CT2);
+        DecCT2 = urna[1].partialDecrypt(DecCT2);
+        
+        ElGamalCT CTH1 = Homomorphism(PK, DecCT1, DecCT2); // CTH encrypts the sum of the plaintexts in CT1 and CT2 that is 24+14
+        
+        BigInteger D1 = urna[2].decryptInTheExponent(CTH1); // finally the third authority
+        // uses the standard decryption procedure to recover the message
+        System.out.println("decrypted plaintext with threshold El Gamal = " + D1 + "\n"); // it should print the same integer as before
 
         
         
