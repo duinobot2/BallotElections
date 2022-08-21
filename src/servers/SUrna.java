@@ -67,6 +67,10 @@ public class SUrna {
 
         out.writeObject(urna.getPK());
         
+        out.close();
+        in.close();
+        socket.close();
+        
         System.out.println("Sono pronto");
         
     }

@@ -20,12 +20,12 @@ import utility.Utils;
  *
  * @author duino
  */
-public class SDialer {
+public class SDealer {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException, ClassNotFoundException{
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
         // TODO code application logic here
         System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
@@ -53,18 +53,26 @@ public class SDialer {
             }
             
             PKs[i] =(ElGamalPK) in.readObject();
+            out.close();
+            in.close();
+            SUrna.getcSock().close();
         }
         
         ElGamalPK PK = generator.aggregatePartialPublicKeys(PKs);
         
-        /*TLSClientBidi SVote = new TLSClientBidi("localhost", 5000);
+        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000);
         ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
         out.writeObject(PK);
-        if(in.readUTF().equals("ok"))
+        int x = in.readInt();
+        if(x==1)
             System.out.println("Send Keys Finished");
         else
-            System.out.println("ERROR Send Keys Finished");*/
+            System.out.println("ERROR Send Keys Finished");
+        
+        out.close();
+        in.close();
+        SVote.getcSock().close();
     }
     
 }
