@@ -58,9 +58,9 @@ public class SUrna {
         int dim = in.readInt();
         
         byte[] SKbytes = new byte[dim];
-        
+
         for(int i =0;i<dim;i++){
-            SKbytes[i]=tempDec.decryptInTheExponent((ElGamalCT)in.readObject()).byteValue();
+            SKbytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
         }
         
         ElGamalDec urna = new ElGamalDec((ElGamalSK)Utils.byteArrayToObj(SKbytes));

@@ -47,11 +47,11 @@ public class SDialer {
             byte[] SKtoSend = Utils.objToByteArray(SKPartial);
             out.writeInt(SKtoSend.length);
             for(int j=0;j<SKtoSend.length;j++){
-                byte[] temp ={0x00,0x00,SKtoSend[j]};
-                out.writeObject(tempEnc.encryptInTheExponent(new BigInteger(temp)));
+                byte[] temp ={0x00,SKtoSend[j]};
+                out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
                 
             }
-                       
+            
             PKs[i] =(ElGamalPK) in.readObject();
         }
         
