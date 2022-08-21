@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ballotelections;
+package testComponents;
 
 import java.math.BigInteger;
 import utility.ElGamalCT;
@@ -38,7 +38,7 @@ public class ElGamalThrTest {
             PKs[i]=urna[i].getPK();
         
         ElGamalPK PK = generator.aggregatePartialPublicKeys(PKs);
-        
+
         ElGamalEnc voter1 = new ElGamalEnc(PK);
         ElGamalEnc voter2 = new ElGamalEnc(PK);
         

@@ -52,7 +52,7 @@ public class ElGamalDec {
         return new ElGamalCT(newC, CT.C2);
     }
     
-    public BigInteger Decrypt(ElGamalCT CT)
+    public BigInteger decrypt(ElGamalCT CT)
     {
     	// C=[C,C2]=[h^r*M mod p, g^r mod p].
     	// h=g^s mod p

@@ -13,7 +13,7 @@ import javax.net.ssl.SSLSocketFactory;
  *
  * @author duino
  */
-public abstract class TLSClientBidi {
+public class TLSClientBidi {
     
     private SSLSocket cSock;
 
@@ -22,8 +22,11 @@ public abstract class TLSClientBidi {
         cSock = (SSLSocket)sockfact.createSocket(hostAddr, port); // specify host and port
         cSock.startHandshake(); // this is optional - if you do not request explicitly handshake the handshake
     }
+
+    public SSLSocket getcSock() {
+        return cSock;
+    }
     
-    public abstract void exchangeInfoWithServer();
-    
+
     
 }

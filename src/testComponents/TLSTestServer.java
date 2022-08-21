@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ballotelections;
+package testComponents;
 
 import java.io.IOException;
 import javax.net.ssl.SSLSocket;
@@ -24,12 +24,7 @@ public class TLSTestServer {
         System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
         System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\ballotelections\\keystoreClient.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-        TLSServerBidi server = new TLSServerBidi(4000) {
-            @Override
-            public void exchangeInfoWithClient(SSLSocket sslSock) {
-                return;
-            }
-        };
+        TLSServerBidi server = new TLSServerBidi(4000);
         
         server.acceptAndCheckClient("");
         

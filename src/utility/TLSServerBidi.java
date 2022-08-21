@@ -17,7 +17,7 @@ import javax.security.auth.x500.X500Principal;
  *
  * @author duino
  */
-public abstract class TLSServerBidi {
+public class TLSServerBidi {
     
     private SSLServerSocket sSock;
 
@@ -46,7 +46,6 @@ public abstract class TLSServerBidi {
         
         return null;
     }
-    
-    public abstract void exchangeInfoWithClient(SSLSocket sslSock);
+
     
 }

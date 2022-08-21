@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ballotelections;
+package servers;
 
 /**
  *
  * @author duino
  */
-public class BallotElections {
+public class SVote {
 
     /**
      * @param args the command line arguments

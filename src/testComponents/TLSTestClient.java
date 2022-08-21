@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ballotelections;
+package testComponents;
 
 import java.io.IOException;
 import utility.TLSClientBidi;
@@ -24,12 +24,7 @@ public class TLSTestClient {
         System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\ballotelections\\keystoreServer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
         
-        TLSClientBidi client = new TLSClientBidi("localhost", 4000) {
-            @Override
-            public void exchangeInfoWithServer() {
-                return;
-            }
-        };
+        TLSClientBidi client = new TLSClientBidi("localhost", 4000);
         
         System.out.println("Client Finished");
     }

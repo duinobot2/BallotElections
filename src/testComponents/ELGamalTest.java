@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ballotelections;
+package testComponents;
 
 import java.math.BigInteger;
 import utility.ElGamalCT;
@@ -41,7 +41,7 @@ public class ELGamalTest {
         D = urna.decryptInTheExponent(CTH);
         System.out.println("decrypted plaintext with Exponential El Gamal= " + D); // it should be 38
 
-        
+
     }
     
 }

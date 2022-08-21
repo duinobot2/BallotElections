@@ -1,5 +1,11 @@
 package utility;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class Utils {
 
@@ -19,7 +25,6 @@ public class Utils {
         return toHex(data, data.length);
     }
 
-        
     public static String toString(
             byte[] bytes,
             int length) {
@@ -59,6 +64,39 @@ public class Utils {
         }
 
         return bytes;
+    }
+
+    public static byte[] objToByteArray(Object obj) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        byte[] yourBytes;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(obj);
+            out.flush();
+            yourBytes = bos.toByteArray();
+
+        } finally {
+            bos.close();
+        }
+
+        return yourBytes;
+    }
+
+    public static Object byteArrayToObj(byte[] bytes) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInput in = null;
+        Object o = null;
+        try {
+            in = new ObjectInputStream(bis);
+             o = in.readObject();
+        } finally {
+
+            if (in != null) {
+                in.close();
+            }
+        }
+        return o;
     }
 
 }
