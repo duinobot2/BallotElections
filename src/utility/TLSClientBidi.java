@@ -22,11 +22,11 @@ public class TLSClientBidi {
         cSock = (SSLSocket)sockfact.createSocket(hostAddr, port); // specify host and port
         cSock.startHandshake(); // this is optional - if you do not request explicitly handshake the handshake
     }
-
+    
     public SSLSocket getcSock() {
         return cSock;
     }
     
-
     
+
 }

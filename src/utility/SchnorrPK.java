@@ -1,8 +1,9 @@
 package utility;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class SchnorrPK {
+public class SchnorrPK implements Serializable{
 
     BigInteger g, h, p, q;
     int securityparameter;

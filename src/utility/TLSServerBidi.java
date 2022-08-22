@@ -27,7 +27,7 @@ public class TLSServerBidi {
         sSock.setNeedClientAuth(true);
     }
     
-    private boolean verifyIdentity(SSLSession session, String certInfo) throws SSLPeerUnverifiedException {
+    public boolean verifyIdentity(SSLSession session, String certInfo) throws SSLPeerUnverifiedException {
         X500Principal id = (X500Principal) session.getPeerPrincipal(); // getPeerPrincipal returns info about the X500Principal of the other peer
         // X500Principal is the field that contains country, Common Name, etc.
         System.out.println("principal: " + id.getName()); // print this info
@@ -45,6 +45,14 @@ public class TLSServerBidi {
         } 
         
         return null;
+    }
+    
+    public SSLSocket accept() throws IOException{
+        SSLSocket sslSock = (SSLSocket) sSock.accept();
+        sslSock.startHandshake(); // after handshake this server wants to obtain info about the connected client and 1) will print this info and 2) will execute the protocol
+        
+        return sslSock;
+        
     }
 
     

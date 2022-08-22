@@ -26,17 +26,19 @@ public class SDealer {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
-        // TODO code application logic here
+        //prova ad aggiungere anche la firma
         System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreServer.jks");
+        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
         
         ElGamalGen generator = new ElGamalGen(64);
         ElGamalPK[] PKs= new ElGamalPK[3];
         
-        for(int i=0;i<3;i++){
-            TLSClientBidi SUrna = new TLSClientBidi("localhost", 4000+i);
+        int[] secretPorts= {4000,4001,6000};
+        
+        for(int i=0;i<secretPorts.length;i++){
+            TLSClientBidi SUrna = new TLSClientBidi("localhost", secretPorts[i]);
 
             ObjectOutputStream out = new ObjectOutputStream(SUrna.getcSock().getOutputStream());
             ObjectInputStream in = new ObjectInputStream(SUrna.getcSock().getInputStream());
@@ -60,19 +62,23 @@ public class SDealer {
         
         ElGamalPK PK = generator.aggregatePartialPublicKeys(PKs);
         
-        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000);
-        ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
-        out.writeObject(PK);
-        int x = in.readInt();
-        if(x==1)
-            System.out.println("Send Keys Finished");
-        else
-            System.out.println("ERROR Send Keys Finished");
+        int[] publicPorts= {4000,4001,4002,5000,6000};
         
-        out.close();
-        in.close();
-        SVote.getcSock().close();
+        for(int i=0;i<publicPorts.length;i++){
+            TLSClientBidi SVote = new TLSClientBidi("localhost", publicPorts[i]);
+            ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
+            out.writeObject(PK);
+            int x = in.readInt();
+            if(x==1)
+                System.out.println("Send Keys Finished");
+            else
+                System.out.println("ERROR Send Keys Finished");
+
+            out.close();
+            in.close();
+            SVote.getcSock().close();
+        }
     }
     
 }
