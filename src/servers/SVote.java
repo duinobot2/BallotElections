@@ -11,13 +11,17 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import javax.net.ssl.SSLSocket;
 import utility.ElGamalCT;
+import utility.ElGamalDec;
 import utility.ElGamalEnc;
+import utility.ElGamalGen;
 import utility.ElGamalPK;
+import utility.ElGamalSK;
 import utility.PacketVote;
 import utility.Schnorr;
 import utility.SchnorrSig;
 import utility.TLSClientBidi;
 import utility.TLSServerBidi;
+import utility.UserPass;
 import utility.Utils;
 
 /**
@@ -66,6 +70,68 @@ public class SVote {
         
     }
     
+    public static boolean checkUserPass(UserPass userPass) throws IOException, ClassNotFoundException{
+        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000);
+
+        ObjectOutputStream out = new ObjectOutputStream(SReg.getcSock().getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(SReg.getcSock().getInputStream());
+
+        out.writeUTF("svoteCheck");
+        System.out.println("svoteCheck send");
+        out.flush();
+        ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK)in.readObject());
+        byte[] userPassToSend = Utils.objToByteArray(userPass);
+        out.writeInt(userPassToSend.length);
+        for(int j=0;j<userPassToSend.length;j++){
+            byte[] temp ={0x00,userPassToSend[j]};
+            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
+            out.flush();
+        }
+        
+        boolean response=in.readBoolean();
+        
+        out.close();
+        in.close();
+        SReg.getcSock().close();
+        
+        return response;
+    }
+    
+    public static boolean setSignature(UserPass userPass, SchnorrSig sign) throws IOException, ClassNotFoundException{
+        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000);
+
+        ObjectOutputStream out = new ObjectOutputStream(SReg.getcSock().getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(SReg.getcSock().getInputStream());
+
+        out.writeUTF("svoteSet");
+        System.out.println("svoteSet send");
+        out.flush();
+        ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK)in.readObject());
+        byte[] userPassToSend = Utils.objToByteArray(userPass);
+        out.writeInt(userPassToSend.length);
+        for(int j=0;j<userPassToSend.length;j++){
+            byte[] temp ={0x00,userPassToSend[j]};
+            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
+            out.flush();
+        }
+        
+        byte[] signToSend = Utils.objToByteArray(sign);
+        out.writeInt(signToSend.length);
+        for(int j=0;j<signToSend.length;j++){
+            byte[] temp ={0x00,signToSend[j]};
+            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
+            out.flush();
+        }
+        
+        boolean response=in.readBoolean();
+        
+        out.close();
+        in.close();
+        SReg.getcSock().close();
+        
+        return response;
+    }
+    
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
         System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
@@ -80,7 +146,7 @@ public class SVote {
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         
-        ElGamalEnc vote = new ElGamalEnc((ElGamalPK)in.readObject());
+        ElGamalPK PK = (ElGamalPK)in.readObject();
         
         out.writeInt(1);
         
@@ -90,25 +156,57 @@ public class SVote {
 
         System.out.println("Sono Pronto");
         
-        
-        //fare accettazione votante
-        //fare controlli userpass cotante
-        
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-        
-        Schnorr signer = new Schnorr(64);
         int[] ports= {4000, 4001, 4002};
-        System.out.println("Risultati invii:");
-        System.out.println(sendPacketToUrna(prepareVotePacket(1, vote, signer), ports));
-        System.out.println(sendPacketToUrna(prepareVotePacket(0, vote, signer), ports));
-        System.out.println(sendPacketToUrna(prepareVotePacket(1, vote, signer), ports));
-        System.out.println(sendPacketToUrna(prepareVotePacket(-1, vote, signer), ports));
-        System.out.println(sendPacketToUrna(prepareVotePacket(0, vote, signer), ports));
-        System.out.println(sendPacketToUrna(prepareVotePacket(1, vote, signer), ports));
         
+        //accettazione votante e voto
+        while(true){
+            socket = SDialer.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
+            ElGamalGen tempGen = new ElGamalGen(64);
+            ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
+
+            out.writeObject(tempGen.getPK());
+
+            int dim = in.readInt();
+
+            byte[] userPassBytes = new byte[dim];
+
+            for(int i =0;i<dim;i++){
+                userPassBytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
+            }
+
+            UserPass toCheck=(UserPass) Utils.byteArrayToObj(userPassBytes);
+            System.out.println("tryTOCheckUserPass");
+            boolean response = checkUserPass(toCheck);
+            
+            out.writeBoolean(response);
+            
+            if(response){
+           
+                out.writeObject(PK);
+
+                PacketVote p = (PacketVote) in.readObject();
+                
+                if(!setSignature(toCheck, p.getSign())){
+                    out.writeBoolean(false);
+                    System.out.println("Firma già presente");
+                }else
+                    out.writeBoolean(sendPacketToUrna(p, ports));
+                    
+                                        
+                System.out.println("pacchetto inviato all'urna");
+            }else
+                System.out.println("Invalid UserPass");
+            
+            out.close();
+            in.close();
+            socket.close();
+        }
+        
+        
+    
     }
     
 }

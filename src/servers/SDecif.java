@@ -75,7 +75,7 @@ public class SDecif {
         in.close();
         socket.close();
         
-        Thread.sleep(10000);
+        Thread.sleep(30000);
         
         int[] urnaPorts= {4000,4001,4002};
         int[] workerPorts= {4000,4001};
