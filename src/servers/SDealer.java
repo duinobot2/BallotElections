@@ -33,9 +33,10 @@ public class SDealer {
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
         
         ElGamalGen generator = new ElGamalGen(64);
-        ElGamalPK[] PKs= new ElGamalPK[3];
         
-        int[] secretPorts= {4000,4001,6000};
+        
+        int[] secretPorts= {4000,4001,4002,6000};
+        ElGamalPK[] PKs= new ElGamalPK[secretPorts.length];
         
         for(int i=0;i<secretPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", secretPorts[i]);

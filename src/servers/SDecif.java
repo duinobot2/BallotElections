@@ -78,7 +78,7 @@ public class SDecif {
         Thread.sleep(30000);
         
         int[] urnaPorts= {4000,4001,4002};
-        int[] workerPorts= {4000,4001};
+        int[] workerPorts= {4000,4001,4002};
         
         for(int i=0;i<urnaPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", urnaPorts[i]);

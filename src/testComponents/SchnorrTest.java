@@ -23,7 +23,7 @@ public class SchnorrTest {
         
         String M = "Ciao";
         SchnorrSig sigma = signer.sign(M);
-
+        
         // Verify
         System.out.println("Verification = " + Schnorr.verify(sigma, signer.getPK(), M));
     }

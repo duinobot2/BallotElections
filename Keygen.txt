@@ -1,3 +1,27 @@
 CertKeystoreGeneration
 cd 'C:\Program Files\Java\jdk1.8.0_231\bin'
-./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias ssltest  -dname "cn=localhost, ou=Client, o=unisa, c=IT" -keypass changeit -keystore keystoreClient.jks
+
+SDealer
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias dealercert -dname "cn=sdealer, ou=CEN, l=Campania" -keypass dealer -keystore keystoreDealer.jks
+./keytool -export -alias dealercert -storepass dealer -file keystoreDealer.cer -keystore keystoreDealer.jks
+
+SDecif
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias decifercert -dname "cn=sdecif, ou=CEN, l=Campania" -keypass decifer -keystore keystoreDecifer.jks
+./keytool -export -alias decifercert -storepass decifer -file keystoreDecifer.cer -keystore keystoreDecifer.jks
+
+SVote
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias votecert -dname "cn=svote, ou=CEN, l=Campania" -keypass servvote -keystore keystoreVote.jks
+./keytool -export -alias votecert -storepass servvote -file keystoreVote.cer -keystore keystoreVote.jks
+
+SReg
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias regcert -dname "cn=sreg, ou=CEN, l=Campania" -keypass register -keystore keystoreReg.jks
+./keytool -export -alias regcert -storepass register -file keystoreReg.cer -keystore keystoreReg.jks
+
+SUrna
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias urnacert -dname "cn=surna, ou=CEN, l=Campania" -keypass servurna -keystore keystoreUrna.jks
+./keytool -export -alias urnacert -storepass servurna -file keystoreUrna.cer -keystore keystoreUrna.jks
+
+SBacheca
+./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias bachecacert -dname "cn=sbacheca, ou=CEN, l=Campania" -keypass bacheca -keystore keystoreBacheca.jks
+./keytool -export -alias bachecacert -storepass bacheca -file keystoreBacheca.cer -keystore keystoreBacheca.jks
+

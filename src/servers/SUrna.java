@@ -34,41 +34,41 @@ public class SUrna {
     private ElGamalDec partialDec=null;
     ArrayList<PacketVote> packetVotes;
 
-    public SUrna(int numPort, int secret) throws IOException, ClassNotFoundException {
+    public SUrna(int numPort) throws IOException, ClassNotFoundException {
         conn = new TLSServerBidi(numPort);
         packetVotes = new ArrayList<>();
         
         
-        if(secret==1){
-            SSLSocket socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
-        
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            ElGamalGen tempGen = new ElGamalGen(64);
-            ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-            out.writeObject(tempGen.getPK());
-
-            int dim = in.readInt();
-
-            byte[] SKbytes = new byte[dim];
-
-            for(int i =0;i<dim;i++){
-                SKbytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-            }
-
-            partialDec = new ElGamalDec((ElGamalSK)Utils.byteArrayToObj(SKbytes));
-
-            out.writeObject(partialDec.getPK());
-            
-            out.close();
-            in.close();
-            socket.close();
-        }
         
         SSLSocket socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        ElGamalGen tempGen = new ElGamalGen(64);
+        ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
+
+        out.writeObject(tempGen.getPK());
+
+        int dim = in.readInt();
+
+        byte[] SKbytes = new byte[dim];
+
+        for(int i =0;i<dim;i++){
+            SKbytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
+        }
+
+        partialDec = new ElGamalDec((ElGamalSK)Utils.byteArrayToObj(SKbytes));
+
+        out.writeObject(partialDec.getPK());
+
+        out.close();
+        in.close();
+        socket.close();
+        
+        
+        socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
         
         PK=(ElGamalPK) in.readObject();
         out.writeInt(1);
@@ -94,11 +94,8 @@ public class SUrna {
         System.out.print("Enter port number: ");
         int numPort = scan.nextInt();
         
-        System.out.print("Enter getSecret? (1=yes): ");
-        int secret = scan.nextInt();
-        scan.close();
         
-        SUrna urna = new SUrna(numPort,secret);
+        SUrna urna = new SUrna(numPort);
         
                        
         System.out.println("Sono pronto");
@@ -190,25 +187,25 @@ public class SUrna {
         socket.close();
 
         
-        if(secret==1){
-            socket = urna.conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-            
-            if(in.readUTF().equals("readyCT")){
-                finalCT=(ElGamalCT) in.readObject();
-                out.writeObject(urna.partialDec.partialDecrypt(finalCT));
-                System.out.println("Work finished");
-            }else{
-                System.out.println("Error receive CT");
-                return;
-            }
-            
-            
-            out.close();
-            in.close();
-            socket.close();
+        
+        socket = urna.conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
+
+        if(in.readUTF().equals("readyCT")){
+            finalCT=(ElGamalCT) in.readObject();
+            out.writeObject(urna.partialDec.partialDecrypt(finalCT));
+            System.out.println("Work finished");
+        }else{
+            System.out.println("Error receive CT");
+            return;
         }
+
+
+        out.close();
+        in.close();
+        socket.close();
+        
         
         
         
