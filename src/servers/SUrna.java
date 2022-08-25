@@ -19,6 +19,7 @@ import utility.ElGamalPK;
 import utility.ElGamalSK;
 import utility.PacketVote;
 import utility.Schnorr;
+import utility.TLSClientBidi;
 import utility.TLSServerBidi;
 import utility.Utils;
 
@@ -150,18 +151,36 @@ public class SUrna {
             
         }
         
+         TLSClientBidi SBacheca = new TLSClientBidi("localhost", 7001);
+            
+        ObjectOutputStream out = new ObjectOutputStream(SBacheca.getcSock().getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(SBacheca.getcSock().getInputStream());
         ElGamalCT finalCT = null;
+        
+        out.writeUTF("surnaadd");
+        out.flush();
+        out.writeInt(urna.packetVotes.size());
+        out.flush();
+        
         for(int i =0;i<urna.packetVotes.size();i++){
             if(i==0)
                 finalCT=urna.packetVotes.get(i).getCT();
             else
                 finalCT=ElGamalCT.Homomorphism(urna.PK, finalCT, urna.packetVotes.get(i).getCT());
+            
+            out.writeObject(urna.packetVotes.get(i).getSign());
+            out.flush();
         }
+
+
+        out.close();
+        in.close();
+        SBacheca.getcSock().close();
         
         System.out.println("Pronto ad inviare il CT");
         SSLSocket socket = urna.conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
         
         out.writeObject(finalCT);
         System.out.println("inviatoCT");

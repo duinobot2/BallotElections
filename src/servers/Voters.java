@@ -125,6 +125,11 @@ public class Voters {
         System.out.println(vote(getUserPass(), 0));
         System.out.println(vote(getUserPass(), 1));
         
+        UserPass error= getUserPass();
+        error.setPassword("resfsddf");
+        
+        System.out.println(vote(error, 1));
+        
     }
 
 }

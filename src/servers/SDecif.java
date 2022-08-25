@@ -134,6 +134,18 @@ public class SDecif {
         
         BigInteger RESULT=finalDec.decryptInTheExponent(finalCT);
         System.out.println("Il risultato della votazione è: "+RESULT);
+        
+        TLSClientBidi SBacheca = new TLSClientBidi("localhost", 7001);
+            
+        out = new ObjectOutputStream(SBacheca.getcSock().getOutputStream());
+        in = new ObjectInputStream(SBacheca.getcSock().getInputStream());
+
+        out.writeUTF("stop");
+        out.flush();
+
+        out.close();
+        in.close();
+        SBacheca.getcSock().close();
     }
     
 }

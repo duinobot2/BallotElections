@@ -12,4 +12,11 @@ public class SchnorrSig implements Serializable{
         this.e = e;
         this.z = z;
     }
+
+    @Override
+    public String toString() {
+        return "a=" + a + ", e=" + e + ", z=" + z ;
+    }
+    
+    
 }
