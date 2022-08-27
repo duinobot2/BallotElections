@@ -29,7 +29,7 @@ public class SDealer {
         System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreDealer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "dealer");
         
-        ElGamalGen generator = new ElGamalGen(64);
+        ElGamalGen generator = new ElGamalGen(512);
         
         
         int[] secretPorts= {4000,4001,4002,6000};

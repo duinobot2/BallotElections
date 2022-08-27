@@ -19,7 +19,7 @@ public class SchnorrTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Schnorr signer = new Schnorr(64);
+        Schnorr signer = new Schnorr(256);
         
         String M = "Ciao";
         SchnorrSig sigma = signer.sign(M);

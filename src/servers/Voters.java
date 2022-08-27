@@ -73,7 +73,7 @@ public class Voters {
         }
         
         ElGamalEnc enc = new ElGamalEnc((ElGamalPK) in.readObject());
-        Schnorr signer = new Schnorr(64);
+        Schnorr signer = new Schnorr(256);
         
         PacketVote p = prepareVotePacket(vote, enc, signer);
         

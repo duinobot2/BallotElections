@@ -26,7 +26,7 @@ public class ElGamalThrTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        ElGamalGen generator = new ElGamalGen(64);
+        ElGamalGen generator = new ElGamalGen(512);
         ElGamalDec[] urna = new ElGamalDec[3];
         
         for(int i=0;i<3;i++)

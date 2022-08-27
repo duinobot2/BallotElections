@@ -23,7 +23,7 @@ public class ELGamalTest {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        ElGamalGen generator = new ElGamalGen(64);
+        ElGamalGen generator = new ElGamalGen(512);
         ElGamalDec urna = new ElGamalDec(generator.getSK());
         ElGamalEnc voter1 = new ElGamalEnc(generator.getPK());
         ElGamalEnc voter2 = new ElGamalEnc(generator.getPK());
