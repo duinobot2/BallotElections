@@ -11,7 +11,11 @@ import java.io.ObjectOutputStream;
 import utility.ElGamalGen;
 import utility.ElGamalPK;
 import utility.ElGamalSK;
+import utility.PacketShareSK;
+import utility.Schnorr;
+import utility.SchnorrSig;
 import utility.TLSClientBidi;
+import utility.Utils;
 
 /**
  *
@@ -23,7 +27,6 @@ public class SDealer {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
-        //prova ad aggiungere anche la firma
         System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreDealer.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "dealer");
         System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreDealer.jks");
@@ -31,9 +34,9 @@ public class SDealer {
         
         ElGamalGen generator = new ElGamalGen(512);
         
-        
         int[] secretPorts= {4000,4001,4002,6000};
         ElGamalPK[] PKs= new ElGamalPK[secretPorts.length];
+        Schnorr signer = new Schnorr(256);
         
         for(int i=0;i<secretPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", secretPorts[i]);
@@ -43,8 +46,15 @@ public class SDealer {
             
             ElGamalSK SKPartial = generator.getPartialSecret();
             
-            out.writeObject(SKPartial);
-                        
+            SchnorrSig sign=signer.sign(Utils.toString(Utils.objToByteArray(SKPartial)));
+            
+            out.writeObject(new PacketShareSK(SKPartial, sign, signer.getPK()));
+            
+            if(in.readBoolean()==false){
+                System.out.println("Errore firma digitale");
+                return;
+            }
+             
             PKs[i] =(ElGamalPK) in.readObject();
             out.close();
             in.close();

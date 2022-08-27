@@ -15,6 +15,7 @@ import utility.ElGamalCT;
 import utility.ElGamalDec;
 import utility.ElGamalPK;
 import utility.ElGamalSK;
+import utility.PacketShareSK;
 import utility.PacketVote;
 import utility.Schnorr;
 import utility.TLSClientBidi;
@@ -41,7 +42,23 @@ public class SUrna {
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         
-        partialDec = new ElGamalDec((ElGamalSK) in.readObject());
+        PacketShareSK packet = (PacketShareSK) in.readObject();
+        if(!Schnorr.verify(packet.getSign(), packet.getSignPK(), Utils.toString(Utils.objToByteArray(packet.getSK())))){
+            System.out.println("Errore controllo firma");
+            
+            out.writeBoolean(false);
+            out.flush();
+            
+            out.close();
+            in.close();
+            socket.close();
+            
+            return;
+        }
+        
+        out.writeBoolean(true);
+        
+        partialDec = new ElGamalDec((ElGamalSK)packet.getSK());
 
         out.writeObject(partialDec.getPK());
 
