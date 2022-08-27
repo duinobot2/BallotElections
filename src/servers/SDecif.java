@@ -12,12 +12,10 @@ import java.math.BigInteger;
 import javax.net.ssl.SSLSocket;
 import utility.ElGamalCT;
 import utility.ElGamalDec;
-import utility.ElGamalGen;
 import utility.ElGamalPK;
 import utility.ElGamalSK;
 import utility.TLSClientBidi;
 import utility.TLSServerBidi;
-import utility.Utils;
 
 /**
  *
@@ -43,20 +41,7 @@ public class SDecif {
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         
-        ElGamalGen tempGen = new ElGamalGen(64);
-        ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-        out.writeObject(tempGen.getPK());
-
-        int dim = in.readInt();
-
-        byte[] SKbytes = new byte[dim];
-
-        for(int i =0;i<dim;i++){
-            SKbytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-        }
-
-        ElGamalDec finalDec = new ElGamalDec((ElGamalSK)Utils.byteArrayToObj(SKbytes));
+        ElGamalDec finalDec = new ElGamalDec((ElGamalSK)in.readObject());
 
         out.writeObject(finalDec.getPK());
 

@@ -8,13 +8,10 @@ package servers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
-import utility.ElGamalEnc;
 import utility.ElGamalGen;
 import utility.ElGamalPK;
 import utility.ElGamalSK;
 import utility.TLSClientBidi;
-import utility.Utils;
 
 /**
  *
@@ -46,15 +43,8 @@ public class SDealer {
             
             ElGamalSK SKPartial = generator.getPartialSecret();
             
-            ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK)in.readObject());
-            byte[] SKtoSend = Utils.objToByteArray(SKPartial);
-            out.writeInt(SKtoSend.length);
-            for(int j=0;j<SKtoSend.length;j++){
-                byte[] temp ={0x00,SKtoSend[j]};
-                out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
-                
-            }
-            
+            out.writeObject(SKPartial);
+                        
             PKs[i] =(ElGamalPK) in.readObject();
             out.close();
             in.close();

@@ -79,14 +79,8 @@ public class SVote {
         out.writeUTF("svoteCheck");
         System.out.println("svoteCheck send");
         out.flush();
-        ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK)in.readObject());
-        byte[] userPassToSend = Utils.objToByteArray(userPass);
-        out.writeInt(userPassToSend.length);
-        for(int j=0;j<userPassToSend.length;j++){
-            byte[] temp ={0x00,userPassToSend[j]};
-            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
-            out.flush();
-        }
+        out.writeObject(userPass);
+        out.flush();
         
         boolean response=in.readBoolean();
         
@@ -106,22 +100,12 @@ public class SVote {
         out.writeUTF("svoteSet");
         System.out.println("svoteSet send");
         out.flush();
-        ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK)in.readObject());
-        byte[] userPassToSend = Utils.objToByteArray(userPass);
-        out.writeInt(userPassToSend.length);
-        for(int j=0;j<userPassToSend.length;j++){
-            byte[] temp ={0x00,userPassToSend[j]};
-            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
-            out.flush();
-        }
         
-        byte[] signToSend = Utils.objToByteArray(sign);
-        out.writeInt(signToSend.length);
-        for(int j=0;j<signToSend.length;j++){
-            byte[] temp ={0x00,signToSend[j]};
-            out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
-            out.flush();
-        }
+        out.writeObject(userPass);
+        out.flush();
+        
+        out.writeObject(sign);
+        out.flush();
         
         boolean response=in.readBoolean();
         
@@ -164,20 +148,7 @@ public class SVote {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            ElGamalGen tempGen = new ElGamalGen(64);
-            ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-            out.writeObject(tempGen.getPK());
-
-            int dim = in.readInt();
-
-            byte[] userPassBytes = new byte[dim];
-
-            for(int i =0;i<dim;i++){
-                userPassBytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-            }
-
-            UserPass toCheck=(UserPass) Utils.byteArrayToObj(userPassBytes);
+            UserPass toCheck=(UserPass) in.readObject();
             System.out.println("tryTOCheckUserPass");
             boolean response = checkUserPass(toCheck);
             

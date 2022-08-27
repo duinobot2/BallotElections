@@ -8,16 +8,10 @@ package servers;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
-import utility.ElGamalCT;
-import utility.ElGamalDec;
-import utility.ElGamalEnc;
-import utility.ElGamalGen;
-import utility.ElGamalPK;
 import utility.SchnorrSig;
 import utility.TLSServerBidi;
 import utility.TableUserPass;
@@ -61,67 +55,30 @@ public class SReg {
                     System.out.println("Il votante ha già recuperato le credenziali o non può votare");
                     out.writeInt(-1);
                 } else {
-                    ElGamalEnc tempEnc = new ElGamalEnc((ElGamalPK) in.readObject());
+                    out.writeInt(1);
+                    
                     UserPass credential = null;
                     do {
                         credential = new UserPass(Utils.generatePassayPassword(), Utils.generatePassayPassword());
                     } while (!tableUserPass.addUserPass(credential));
 
-                    byte[] credToSend = Utils.objToByteArray(credential);
-                    out.writeInt(credToSend.length);
-                    for (int j = 0; j < credToSend.length; j++) {
-                        byte[] temp = {0x00, credToSend[j]};
-                        out.writeObject(tempEnc.encrypt(new BigInteger(temp)));//funziona con entrambe le encrypt con 0 a sx
-
-                    }
-                    
+                    out.writeObject(credential);
+                                        
                     System.out.println("Credenziali rilasciate");
                 }
 
             } else if (check.equals("svoteCheck")) {
-                ElGamalGen tempGen = new ElGamalGen(64);
-                ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-                out.writeObject(tempGen.getPK());
-
-                int dim = in.readInt();
-
-                byte[] userPassBytes = new byte[dim];
-
-                for(int i =0;i<dim;i++){
-                    userPassBytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-                }
-                
-                UserPass toCheck=(UserPass) Utils.byteArrayToObj(userPassBytes);
+               
+                UserPass toCheck=(UserPass) in.readObject();
                 
                 out.writeBoolean(tableUserPass.containUserPass(toCheck));
                 
                 
             }else if (check.equals("svoteSet")) {
-                ElGamalGen tempGen = new ElGamalGen(64);
-                ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-                out.writeObject(tempGen.getPK());
-
-                int dim = in.readInt();
-
-                byte[] userPassBytes = new byte[dim];
-
-                for(int i =0;i<dim;i++){
-                    userPassBytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-                }
-                
-                UserPass toCheck=(UserPass) Utils.byteArrayToObj(userPassBytes);
-                
-                dim = in.readInt();
-                
-                byte[] signBytes = new byte[dim];
-                
-                for(int i =0;i<dim;i++){
-                    signBytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-                }
-                
-                SchnorrSig sign = (SchnorrSig) Utils.byteArrayToObj(signBytes);
+                              
+                UserPass toCheck=(UserPass) in.readObject();
+                             
+                SchnorrSig sign = (SchnorrSig) in.readObject();
                 
                 out.writeBoolean(tableUserPass.setSignature(toCheck, sign));
             } else {

@@ -5,7 +5,6 @@
  */
 package servers;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,7 +13,6 @@ import java.util.Scanner;
 import javax.net.ssl.SSLSocket;
 import utility.ElGamalCT;
 import utility.ElGamalDec;
-import utility.ElGamalGen;
 import utility.ElGamalPK;
 import utility.ElGamalSK;
 import utility.PacketVote;
@@ -38,26 +36,12 @@ public class SUrna {
         conn = new TLSServerBidi(numPort);
         packetVotes = new ArrayList<>();
         
-        
-        
         SSLSocket socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
 
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        ElGamalGen tempGen = new ElGamalGen(64);
-        ElGamalDec tempDec = new ElGamalDec(tempGen.getSK());
-
-        out.writeObject(tempGen.getPK());
-
-        int dim = in.readInt();
-
-        byte[] SKbytes = new byte[dim];
-
-        for(int i =0;i<dim;i++){
-            SKbytes[i]=tempDec.decrypt((ElGamalCT)in.readObject()).byteValue();
-        }
-
-        partialDec = new ElGamalDec((ElGamalSK)Utils.byteArrayToObj(SKbytes));
+        
+        partialDec = new ElGamalDec((ElGamalSK) in.readObject());
 
         out.writeObject(partialDec.getPK());
 
@@ -89,18 +73,13 @@ public class SUrna {
         System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
         
-              
         Scanner scan = new Scanner(System.in);
         System.out.print("Enter port number: ");
         int numPort = scan.nextInt();
         
-        
         SUrna urna = new SUrna(numPort);
         
-                       
         System.out.println("Sono pronto");
-        
-        
         
         
         while(true){
