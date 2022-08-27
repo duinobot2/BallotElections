@@ -36,7 +36,7 @@ public class SUrna {
         conn = new TLSServerBidi(numPort);
         packetVotes = new ArrayList<>();
         
-        SSLSocket socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        SSLSocket socket = conn.acceptAndCheckClient("CN=sdealer,OU=CEN,L=Campania");
 
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -50,7 +50,7 @@ public class SUrna {
         socket.close();
         
         
-        socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        socket = conn.acceptAndCheckClient("CN=sdealer,OU=CEN,L=Campania");
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
         
@@ -68,10 +68,10 @@ public class SUrna {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreUrna.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "servurna");
+        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreUrna.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "servurna");
         
         Scanner scan = new Scanner(System.in);
         System.out.print("Enter port number: ");
@@ -84,40 +84,46 @@ public class SUrna {
         
         while(true){
             SSLSocket socket = urna.conn.accept();
-            //if(urna.conn.verifyIdentity(socket.getSession(), "CN=localhost,OU=Server,O=unisa,C=IT")){
+            
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             String check=in.readUTF();
             if(check.equals("server")){    
-                //ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                //ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                 
-                if(in.readUTF().equals("stop")){
-                    out.close();
-                    in.close();
-                    socket.close();
-                    break;
+                if(urna.conn.verifyIdentity(socket.getSession(), "CN=sdecif,OU=CEN,L=Campania")){
+                                
+                    if(in.readUTF().equals("stop")){
+                        out.close();
+                        in.close();
+                        socket.close();
+                        break;
+                    }else{
+                        out.close();
+                        in.close();
+                        socket.close();
+                        System.out.println("Error Decif command");
+                    }
                 }else{
                     out.close();
                     in.close();
                     socket.close();
-                    System.out.println("Error Decif command");
+                    System.out.println("Error SDecif identity");
                 }
-                
-            //}else if(urna.conn.verifyIdentity(socket.getSession(), "CN=localhost,OU=Client,O=unisa,C=IT")){
+            
             }else if(check.equals("client")){    
-                //ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                //ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                
+                if(urna.conn.verifyIdentity(socket.getSession(), "CN=svote,OU=CEN,L=Campania")){
+                    PacketVote p = (PacketVote) in.readObject();
+                    if(Schnorr.verify(p.getSign(), p.getSignPK(), Utils.toString(Utils.objToByteArray(p.getCT())))){
+                        urna.packetVotes.add(p);
+                        out.writeBoolean(true);
+                    }else
+                        out.writeBoolean(false);
 
-                PacketVote p = (PacketVote) in.readObject();
-                if(Schnorr.verify(p.getSign(), p.getSignPK(), Utils.toString(Utils.objToByteArray(p.getCT())))){
-                    urna.packetVotes.add(p);
-                    out.writeBoolean(true);
+                    System.out.println("Voto arrivato");
                 }else
-                    out.writeBoolean(false);
-
-                System.out.println("Voto arrivato");
-
+                    System.out.println("Error SVote identity");
+                
                 out.close();
                 in.close();
                 socket.close();
@@ -154,7 +160,7 @@ public class SUrna {
         SBacheca.getcSock().close();
         
         System.out.println("Pronto ad inviare il CT");
-        SSLSocket socket = urna.conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        SSLSocket socket = urna.conn.acceptAndCheckClient("CN=sdecif,OU=CEN,L=Campania");
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
         
@@ -167,7 +173,7 @@ public class SUrna {
 
         
         
-        socket = urna.conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        socket = urna.conn.acceptAndCheckClient("CN=sdecif,OU=CEN,L=Campania");
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
 

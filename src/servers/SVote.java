@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import javax.security.auth.x500.X500Principal;
+import org.bouncycastle.util.encoders.Hex;
 import utility.ElGamalCT;
 import utility.ElGamalDec;
 import utility.ElGamalEnc;
@@ -70,7 +73,21 @@ public class SVote {
         
     }
     
-    public static boolean checkUserPass(UserPass userPass) throws IOException, ClassNotFoundException{
+    public static boolean checkUserPassCF(UserPass userPass, SSLSession session) throws IOException, ClassNotFoundException{
+        X500Principal id = (X500Principal) session.getPeerPrincipal(); // getPeerPrincipal returns info about the X500Principal of the other peer
+        // X500Principal is the field that contains country, Common Name, etc.
+        System.out.println("principal: " + id.getName()); // print this info
+        
+        String[] strings = id.getName().split(",");
+        String CF=null;
+        
+        for(String s : strings){
+            if(s.startsWith("1.3.18.0.2.6.73")){
+                CF=new String(Hex.decode(s.substring(21)));
+                break;
+            }
+        }
+        
         TLSClientBidi SReg = new TLSClientBidi("localhost", 7000);
 
         ObjectOutputStream out = new ObjectOutputStream(SReg.getcSock().getOutputStream());
@@ -80,6 +97,8 @@ public class SVote {
         System.out.println("svoteCheck send");
         out.flush();
         out.writeObject(userPass);
+        out.flush();
+        out.writeUTF(CF);
         out.flush();
         
         boolean response=in.readBoolean();
@@ -118,14 +137,14 @@ public class SVote {
     
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreVote.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "servvote");
+        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreVote.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "servvote");
         
-        TLSServerBidi SDialer = new TLSServerBidi(5000);
+        TLSServerBidi SDealer = new TLSServerBidi(5000);
         
-        SSLSocket socket = SDialer.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+        SSLSocket socket = SDealer.acceptAndCheckClient("CN=sdealer,OU=CEN,L=Campania");
         
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -144,13 +163,13 @@ public class SVote {
         
         //accettazione votante e voto
         while(true){
-            socket = SDialer.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+            socket = SDealer.accept();
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
             UserPass toCheck=(UserPass) in.readObject();
             System.out.println("tryTOCheckUserPass");
-            boolean response = checkUserPass(toCheck);
+            boolean response = checkUserPassCF(toCheck, socket.getSession());
             
             out.writeBoolean(response);
             

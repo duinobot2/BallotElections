@@ -36,9 +36,9 @@ public class Voters {
         return new PacketVote(CT, sign, signer.getPK());
     }
     
-    private static UserPass getUserPass() throws IOException, ClassNotFoundException {
-        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000);
-
+    private static UserPass getUserPass(int numVoter) throws IOException, ClassNotFoundException, Exception {
+        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000, "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
+        
         ObjectOutputStream out = new ObjectOutputStream(SReg.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SReg.getcSock().getInputStream());
 
@@ -58,9 +58,9 @@ public class Voters {
         return userPass;
     }
     
-    private static boolean vote(UserPass userPass, int vote) throws IOException, ClassNotFoundException{
-        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000);
-
+    private static boolean vote(UserPass userPass, int vote, int numVoter) throws IOException, ClassNotFoundException, Exception{
+        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000, "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
+        
         ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
         
@@ -89,24 +89,31 @@ public class Voters {
         
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+    public static void main(String[] args) throws IOException, ClassNotFoundException, Exception {
+        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreVoters.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "voters");
         
         System.out.println("Responso votanti:");
-        System.out.println(vote(getUserPass(), 1));
-        System.out.println(vote(getUserPass(), 0));
-        System.out.println(vote(getUserPass(), 1));
-        System.out.println(vote(getUserPass(), -1));
-        System.out.println(vote(getUserPass(), 0));
-        System.out.println(vote(getUserPass(), 1));
         
-        UserPass error= getUserPass();
+        UserPass error= getUserPass(1);
+        String realPass=error.getPassword();
         error.setPassword("resfsddf");
+        System.out.println(vote(error, 1, 7));
+        error.setPassword(realPass);
         
-        System.out.println(vote(error, 1));
+        System.out.println(vote(error, 1, 1));
+        
+        error=getUserPass(2);
+        System.out.println(vote(error, 0, 3));
+        
+        System.out.println(vote(error, 0, 2));
+        System.out.println(vote(getUserPass(3), 1, 3));
+        System.out.println(vote(getUserPass(4), -1, 4));
+        System.out.println(vote(getUserPass(5), 0, 5));
+        System.out.println(vote(getUserPass(6), 1, 6));
+        
+        System.out.println(getUserPass(6)!=null);
+        System.out.println(getUserPass(7)!=null);
         
     }
 

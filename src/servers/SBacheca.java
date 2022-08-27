@@ -24,16 +24,16 @@ public class SBacheca {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.keyStorePassword", "changeit");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\src\\testComponents\\keystoreClient.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreBacheca.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "bacheca");
+        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreBacheca.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", "bacheca");
         
         ArrayList<SchnorrSig> signatureList = new ArrayList<>();
         TLSServerBidi conn = new TLSServerBidi(7001);
         
         while (true) {
-            SSLSocket socket = conn.acceptAndCheckClient("CN=localhost,OU=Client,O=unisa,C=IT");
+            SSLSocket socket = conn.accept();
 
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -41,17 +41,25 @@ public class SBacheca {
             System.out.println(check);
             
             if (check.equals("surnaadd")) {
-                int numSign=in.readInt();
-                for(int i=0;i<numSign;i++)
-                    signatureList.add((SchnorrSig) in.readObject());
+                if(conn.verifyIdentity(socket.getSession(), "CN=surna,OU=CEN,L=Campania")){
+                    int numSign=in.readInt();
+                    for(int i=0;i<numSign;i++)
+                        signatureList.add((SchnorrSig) in.readObject());
+                }else
+                    System.out.println("Error SUrna identity");
+                
                 out.close();
                 in.close();
                 socket.close();
             }else if(check.equals("stop")){
+                boolean idCheck=conn.verifyIdentity(socket.getSession(), "CN=sdecif,OU=CEN,L=Campania");
                 out.close();
                 in.close();
                 socket.close();
-                break;
+                if(idCheck)             
+                    break;
+                else
+                    System.out.println("Error SDecif identity");
             }
             
         }

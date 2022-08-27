@@ -1,6 +1,7 @@
 CertKeystoreGeneration
 cd 'C:\Program Files\Java\jdk1.8.0_231\bin'
 
+CERT
 SDealer
 ./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias dealercert -dname "cn=sdealer, ou=CEN, l=Campania" -keypass dealer -keystore keystoreDealer.jks
 ./keytool -export -alias dealercert -storepass dealer -file keystoreDealer.cer -keystore keystoreDealer.jks
@@ -24,4 +25,77 @@ SUrna
 SBacheca
 ./keytool  -genkey -noprompt -trustcacerts -keyalg RSA -alias bachecacert -dname "cn=sbacheca, ou=CEN, l=Campania" -keypass bacheca -keystore keystoreBacheca.jks
 ./keytool -export -alias bachecacert -storepass bacheca -file keystoreBacheca.cer -keystore keystoreBacheca.jks
+
+Voters
+./openssl.exe req -new -x509 -out voter1.crt -keyout voter1.pem
+./openssl.exe req -new -x509 -out voter2.crt -keyout voter2.pem
+./openssl.exe req -new -x509 -out voter3.crt -keyout voter3.pem
+./openssl.exe req -new -x509 -out voter4.crt -keyout voter4.pem
+./openssl.exe req -new -x509 -out voter5.crt -keyout voter5.pem
+./openssl.exe req -new -x509 -out voter6.crt -keyout voter6.pem
+./openssl.exe req -new -x509 -out voter7err.crt -keyout voter7err.pem
+
+TRUSTSTORE
+SDealer
+./keytool -import -v -trustcacerts -alias urnacert -keystore truststoreDealer.jks -file keystoreUrna.cer -keypass dealer 
+./keytool -import -v -trustcacerts -alias decifercert -keystore truststoreDealer.jks -file keystoreDecifer.cer -keypass dealer 
+./keytool -import -v -trustcacerts -alias votecert -keystore truststoreDealer.jks -file keystoreVote.cer -keypass dealer 
+
+SDecif
+./keytool -import -v -trustcacerts -alias urnacert -keystore truststoreDecifer.jks -file keystoreUrna.cer -keypass decifer
+./keytool -import -v -trustcacerts -alias dealercert -keystore truststoreDecifer.jks -file keystoreDealer.cer -keypass decifer
+./keytool -import -v -trustcacerts -alias bachecacert -keystore truststoreDecifer.jks -file keystoreBacheca.cer -keypass decifer
+
+SVote
+./keytool -import -v -trustcacerts -alias dealercert -keystore truststoreVote.jks -file keystoreDealer.cer -keypass servvote
+./keytool -import -v -trustcacerts -alias urnacert -keystore truststoreVote.jks -file keystoreUrna.cer -keypass servvote
+./keytool -import -v -trustcacerts -alias regcert -keystore truststoreVote.jks -file keystoreReg.cer -keypass servvote
+./keytool -import -v -trustcacerts -alias vot1cert -keystore truststoreVote.jks -file voter1.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot2cert -keystore truststoreVote.jks -file voter2.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot3cert -keystore truststoreVote.jks -file voter3.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot4cert -keystore truststoreVote.jks -file voter4.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot5cert -keystore truststoreVote.jks -file voter5.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot6cert -keystore truststoreVote.jks -file voter6.crt -keypass servvote
+./keytool -import -v -trustcacerts -alias vot7cert -keystore truststoreVote.jks -file voter7err.crt -keypass servvote
+
+SReg
+./keytool -import -v -trustcacerts -alias votecert -keystore truststoreReg.jks -file keystoreVote.cer -keypass register
+./keytool -import -v -trustcacerts -alias vot1cert -keystore truststoreReg.jks -file voter1.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot2cert -keystore truststoreReg.jks -file voter2.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot3cert -keystore truststoreReg.jks -file voter3.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot4cert -keystore truststoreReg.jks -file voter4.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot5cert -keystore truststoreReg.jks -file voter5.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot6cert -keystore truststoreReg.jks -file voter6.crt -keypass register
+./keytool -import -v -trustcacerts -alias vot7cert -keystore truststoreReg.jks -file voter7err.crt -keypass register
+
+SUrna
+./keytool -import -v -trustcacerts -alias dealercert -keystore truststoreUrna.jks -file keystoreDealer.cer -keypass servurna
+./keytool -import -v -trustcacerts -alias decifercert -keystore truststoreUrna.jks -file keystoreDecifer.cer -keypass servurna
+./keytool -import -v -trustcacerts -alias votecert -keystore truststoreUrna.jks -file keystoreVote.cer -keypass servurna
+./keytool -import -v -trustcacerts -alias bachecacert -keystore truststoreUrna.jks -file keystoreBacheca.cer -keypass servurna
+
+SBacheca
+./keytool -import -v -trustcacerts -alias urnacert -keystore truststoreBacheca.jks -file keystoreUrna.cer -keypass bacheca
+./keytool -import -v -trustcacerts -alias decifercert -keystore truststoreBacheca.jks -file keystoreDecifer.cer -keypass bacheca
+
+Voters
+./keytool -import -v -trustcacerts -alias regcert -keystore truststoreVoters.jks -file keystoreReg.cer -keypass voters
+./keytool -import -v -trustcacerts -alias votecert -keystore truststoreVoters.jks -file keystoreVote.cer -keypass voters
+
+JDKVoters
+./openssl pkcs12 -export -out voter1.p12 -inkey voter1.pem -in voter1.crt -name "voter1"
+./openssl pkcs12 -export -out voter2.p12 -inkey voter2.pem -in voter2.crt -name "voter2"
+./openssl pkcs12 -export -out voter3.p12 -inkey voter3.pem -in voter3.crt -name "voter3"
+./openssl pkcs12 -export -out voter4.p12 -inkey voter4.pem -in voter4.crt -name "voter4"
+./openssl pkcs12 -export -out voter5.p12 -inkey voter5.pem -in voter5.crt -name "voter5"
+./openssl pkcs12 -export -out voter6.p12 -inkey voter6.pem -in voter6.crt -name "voter6"
+./openssl pkcs12 -export -out voter7err.p12 -inkey voter7err.pem -in voter7err.crt -name "voter7"
+
+./keytool -importkeystore -srckeystore voter1.p12 -srcstoretype pkcs12 -destkeystore voter1.jks
+./keytool -importkeystore -srckeystore voter2.p12 -srcstoretype pkcs12 -destkeystore voter2.jks
+./keytool -importkeystore -srckeystore voter3.p12 -srcstoretype pkcs12 -destkeystore voter3.jks
+./keytool -importkeystore -srckeystore voter4.p12 -srcstoretype pkcs12 -destkeystore voter4.jks
+./keytool -importkeystore -srckeystore voter5.p12 -srcstoretype pkcs12 -destkeystore voter5.jks
+./keytool -importkeystore -srckeystore voter6.p12 -srcstoretype pkcs12 -destkeystore voter6.jks
+./keytool -importkeystore -srckeystore voter7err.p12 -srcstoretype pkcs12 -destkeystore voter7err.jks
 
