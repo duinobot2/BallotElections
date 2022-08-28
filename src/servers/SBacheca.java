@@ -17,6 +17,7 @@ public class SBacheca {
      * @brief Il Server Bacheca riceve le firme dai server urna e le pubblica solo dopo l'annuncio del risultato finale
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
+        System.out.println("Sono SBacheca");
         
         // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreBacheca.jks");

@@ -25,6 +25,7 @@ public class SDecif {
      * e di annunciare il risultato finale
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        System.out.println("Sono SDecif");
         
         // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDecifer.jks");

@@ -84,6 +84,7 @@ public class SReg {
      * @brief Il Server Reg si occupa di controllare e registrare tutti gli elettori legittimi
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
+        System.out.println("Sono SReg");
         
         // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreReg.jks");

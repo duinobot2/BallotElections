@@ -123,6 +123,7 @@ public class Voters {
      * @throws Exception 
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, Exception {
+        System.out.println("Sono Voters");
         
         // Setting TrustStore
         System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreVoters.jks");

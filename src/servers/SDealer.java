@@ -23,6 +23,7 @@ public class SDealer {
      * elettore, di votare.
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
+        System.out.println("Sono SDealer");
         
         // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDealer.jks");
