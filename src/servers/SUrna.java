@@ -85,9 +85,9 @@ public class SUrna {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreUrna.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreUrna.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "servurna");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreUrna.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreUrna.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "servurna");
         
         Scanner scan = new Scanner(System.in);

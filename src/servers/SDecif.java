@@ -31,9 +31,9 @@ public class SDecif {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreDecifer.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDecifer.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "decifer");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreDecifer.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreDecifer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "decifer");
         
         

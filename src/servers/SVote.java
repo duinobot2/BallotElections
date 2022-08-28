@@ -137,9 +137,9 @@ public class SVote {
     
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreVote.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreVote.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "servvote");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreVote.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreVote.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "servvote");
         
         TLSServerBidi SDealer = new TLSServerBidi(5000);

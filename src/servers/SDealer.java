@@ -27,9 +27,9 @@ public class SDealer {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreDealer.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDealer.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "dealer");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreDealer.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreDealer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "dealer");
         
         ElGamalGen generator = new ElGamalGen(512);

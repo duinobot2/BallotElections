@@ -80,9 +80,9 @@ public class SReg {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreReg.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreReg.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "register");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreReg.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreReg.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "register");
         
         TableUserPass tableUserPass = new TableUserPass();

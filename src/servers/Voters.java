@@ -37,7 +37,7 @@ public class Voters {
     }
     
     private static UserPass getUserPass(int numVoter) throws IOException, ClassNotFoundException, Exception {
-        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000, "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
+        TLSClientBidi SReg = new TLSClientBidi("localhost", 7000, ".\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
         
         ObjectOutputStream out = new ObjectOutputStream(SReg.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SReg.getcSock().getInputStream());
@@ -59,7 +59,7 @@ public class Voters {
     }
     
     private static boolean vote(UserPass userPass, int vote, int numVoter) throws IOException, ClassNotFoundException, Exception{
-        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000, "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
+        TLSClientBidi SVote = new TLSClientBidi("localhost", 5000, ".\\cert\\voter"+ numVoter +".jks", "voter" + numVoter);
         
         ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
@@ -90,7 +90,7 @@ public class Voters {
     }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, Exception {
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreVoters.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreVoters.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "voters");
         
         System.out.println("Responso votanti:");

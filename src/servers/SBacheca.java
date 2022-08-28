@@ -24,9 +24,9 @@ public class SBacheca {
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         // TODO code application logic here
-        System.setProperty("javax.net.ssl.keyStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\keystoreBacheca.jks");
+        System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreBacheca.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "bacheca");
-        System.setProperty("javax.net.ssl.trustStore", "D:\\duino\\Google Drive (antonello.avella@iisfocaccia.edu.it)\\2022\\AlgeProtSicurezza\\ProjectElections\\BallotElections\\cert\\truststoreBacheca.jks");
+        System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreBacheca.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "bacheca");
         
         ArrayList<SchnorrSig> signatureList = new ArrayList<>();
