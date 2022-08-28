@@ -64,7 +64,7 @@ public class SUrna {
         // Inizializzazione del decifratore parziale
         partialDec = new ElGamalDec((ElGamalSK)packet.getSK());
 
-        // Invio delle PK parziali al server Dealer
+        // Invio della PK parziale al server Dealer
         out.writeObject(partialDec.getPK());
 
         out.close();

@@ -31,11 +31,7 @@ public class SVote {
      * @throws IOException 
      */
     public static boolean sendPacketToUrna(PacketVote packet, int [] ports) throws IOException{
-        
-        // Verifica della firma
-        if(Schnorr.verify(packet.getSign(), packet.getSignPK(), Utils.toString(Utils.objToByteArray(packet.getCT())))==false)
-            return false;
-        
+                
         // Connessione all'urna (Invio bilanciato)
         TLSClientBidi SUrna = new TLSClientBidi("localhost", ports[countUrna]);
         ObjectOutputStream out = new ObjectOutputStream(SUrna.getcSock().getOutputStream());
@@ -201,15 +197,22 @@ public class SVote {
 
                 PacketVote p = (PacketVote) in.readObject();
                 
-                // Inserimento firma nel database del Server Reg
-                if(!setSignature(toCheck, p.getSign())){
+                // Verifica della firma
+                if(Schnorr.verify(p.getSign(), p.getSignPK(), Utils.toString(Utils.objToByteArray(p.getCT())))){
+                                    
+                    // Inserimento firma nel database del Server Reg
+                    if(!setSignature(toCheck, p.getSign())){
+                        out.writeBoolean(false);
+                        System.out.println("Firma già presente");
+                    }else // Invio del pacchetto all'urna
+                        out.writeBoolean(sendPacketToUrna(p, ports));
+
+                    System.out.println("pacchetto inviato all'urna");
+                }else{
                     out.writeBoolean(false);
-                    System.out.println("Firma già presente");
-                }else // Invio del pacchetto all'urna
-                    out.writeBoolean(sendPacketToUrna(p, ports));
+                    System.out.println("Firma errata");
+                }
                     
-                                        
-                System.out.println("pacchetto inviato all'urna");
             }else
                 System.out.println("Invalid UserPass");
             
