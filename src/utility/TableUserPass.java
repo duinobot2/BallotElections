@@ -111,7 +111,7 @@ public class TableUserPass {
      */
     public boolean setSignature(UserPass userPass, SchnorrSig sign) throws NoSuchAlgorithmException{
         PassSign passSign = getPassSign(userPass);
-        if(passSign==null || passSign.getSign() == null)
+        if(passSign==null || passSign.getSign() != null)
             return false;
         
         passSign.setSign(sign);

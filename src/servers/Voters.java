@@ -140,6 +140,10 @@ public class Voters {
         error.setPassword(realPass);
         System.out.println(vote(error, 1, 1));
         
+        // Elettore 1 che si logga 2 volte
+        error.setPassword(realPass);
+        System.out.println(vote(error, -1, 1));
+        
         // Ladro (elettore 3) non registrato che prova a loggarsi con le credenziali dell'elettore 2
         error=getUserPass(2);
         System.out.println(vote(error, 0, 3));

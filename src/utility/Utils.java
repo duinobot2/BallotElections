@@ -18,6 +18,23 @@ import org.passay.PasswordGenerator;
  * @brief Classe contenente metodi statici utili
  */
 public class Utils {
+    
+    /**
+     * @brief Conversione di una stringa in array di byte
+     * @param string Stringa da convertire
+     * @return array di byte
+     */
+    public static byte[] toByteArray(
+            String string) {
+        byte[] bytes = new byte[string.length()];
+        char[] chars = string.toCharArray();
+
+        for (int i = 0; i != chars.length; i++) {
+            bytes[i] = (byte) chars[i];
+        }
+
+        return bytes;
+    }
 
     /**
      * @brief Conversione di un certo numero di byte di un array in Stringa

@@ -169,6 +169,7 @@ public class SVote {
         ElGamalPK PK = (ElGamalPK)in.readObject();
         
         out.writeInt(1);
+        out.flush();
         
         out.close();
         in.close();
