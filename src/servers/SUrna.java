@@ -150,7 +150,7 @@ public class SUrna {
             
         }
         
-         TLSClientBidi SBacheca = new TLSClientBidi("localhost", 7001);
+        TLSClientBidi SBacheca = new TLSClientBidi("localhost", 7001);
             
         ObjectOutputStream out = new ObjectOutputStream(SBacheca.getcSock().getOutputStream());
         ObjectInputStream in = new ObjectInputStream(SBacheca.getcSock().getInputStream());
