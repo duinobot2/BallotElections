@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utility;
 
 import java.io.IOException;
@@ -14,8 +9,8 @@ import javax.net.ssl.SSLSocket;
 import javax.security.auth.x500.X500Principal;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief TLS con autenticazione bidirezionale Lato Server
  */
 public class TLSServerBidi {
     
@@ -34,6 +29,12 @@ public class TLSServerBidi {
         return id.getName().equals(certInfo); 
     }
     
+    /**
+     * @brief Restituisce la socket solo se l'autenticazione del Client va a buon fine
+     * @param certInfo informazioni attese dal Certificato del Client da verificare
+     * @return socket 
+     * @throws IOException 
+     */
     public SSLSocket acceptAndCheckClient(String certInfo) throws IOException{
         SSLSocket sslSock = (SSLSocket) sSock.accept();
         sslSock.startHandshake(); // after handshake this server wants to obtain info about the connected client and 1) will print this info and 2) will execute the protocol

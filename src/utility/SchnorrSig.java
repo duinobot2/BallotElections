@@ -3,6 +3,10 @@ package utility;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Firma di Schnorr
+ */
 public class SchnorrSig implements Serializable{
 
     BigInteger a, e, z;

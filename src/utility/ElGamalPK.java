@@ -2,9 +2,11 @@ package utility;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-//structures for ElGamal public-key
-//Vincenzo Iovino
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief El Gamal Public Key
+ */
 public class ElGamalPK implements Serializable {
 
     BigInteger g, h, p, q; // description of the group and public-key h=g^s

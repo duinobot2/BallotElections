@@ -13,24 +13,18 @@ import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Classe contenente metodi statici utili
+ */
 public class Utils {
 
-    private static String digits = "0123456789abcdef";
-
-    public static String toHex(byte[] data, int length) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i != length; i++) {
-            int v = data[i] & 0xff;
-            buf.append(digits.charAt(v >> 4));
-            buf.append(digits.charAt(v & 0xf));
-        }
-        return buf.toString();
-    }
-
-    public static String toHex(byte[] data) {
-        return toHex(data, data.length);
-    }
-
+    /**
+     * @brief Conversione di un certo numero di byte di un array in Stringa
+     * @param bytes array di byte da convertire
+     * @param length lunghezza array di byte
+     * @return stringa
+     */
     public static String toString(
             byte[] bytes,
             int length) {
@@ -43,35 +37,22 @@ public class Utils {
         return new String(chars);
     }
 
-    public static String toString(
-            byte[] bytes,
-            int from, int length) {
-        char[] chars = new char[length];
-
-        for (int i = from; i != chars.length; i++) {
-            chars[i] = (char) (bytes[i] & 0xff);
-        }
-
-        return new String(chars);
-    }
-
+    /**
+     * @brief Conversione array di byte in Stringa
+     * @param bytes array di byte da convertire
+     * @return stringa
+     */
     public static String toString(
             byte[] bytes) {
         return toString(bytes, bytes.length);
     }
 
-    public static byte[] toByteArray(
-            String string) {
-        byte[] bytes = new byte[string.length()];
-        char[] chars = string.toCharArray();
-
-        for (int i = 0; i != chars.length; i++) {
-            bytes[i] = (byte) chars[i];
-        }
-
-        return bytes;
-    }
-
+    /**
+     * @brief Conversione di un oggetto in un array di byte
+     * @param obj oggetto da convertire
+     * @return array di byte
+     * @throws IOException 
+     */
     public static byte[] objToByteArray(Object obj) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
@@ -89,6 +70,13 @@ public class Utils {
         return yourBytes;
     }
 
+    /**
+     * @brief Conversione di un array di byte in un oggetto
+     * @param bytes array di byte da convertire
+     * @return oggetto
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
     public static Object byteArrayToObj(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInput in = null;
@@ -105,6 +93,10 @@ public class Utils {
         return o;
     }
     
+    /**
+     * @brief Generazione di una stringa casuale rappresentante Password/ID (con randomness sicura) 
+     * @return stringa casuale
+     */
     public static String generatePassayPassword() {
         PasswordGenerator gen = new PasswordGenerator(new SecureRandom());
         CharacterData lowerCaseChars = EnglishCharacterData.LowerCase;

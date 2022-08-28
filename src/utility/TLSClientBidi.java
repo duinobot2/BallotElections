@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utility;
 
 import java.io.FileInputStream;
@@ -14,8 +9,8 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief TLS con autenticazione bidirezionale Lato Client
  */
 public class TLSClientBidi {
 
@@ -41,12 +36,27 @@ public class TLSClientBidi {
         return sslContext;
     }
 
+    /**
+     * @brief Costruttore di Default
+     * @param hostAddr indirizzo server
+     * @param port porta server
+     * @throws IOException 
+     */
     public TLSClientBidi(String hostAddr, int port) throws IOException {
         SSLSocketFactory sockfact = (SSLSocketFactory) SSLSocketFactory.getDefault(); // similar to the server except 
         cSock = (SSLSocket) sockfact.createSocket(hostAddr, port); // specify host and port
         cSock.startHandshake(); // this is optional - if you do not request explicitly handshake the handshake
     }
     
+    /**
+     * @brief Costruttore con KeyStore dinamico
+     * @param hostAddr indirizzo server
+     * @param port porta server
+     * @param keystoreFile Percorso del KeyStore in input
+     * @param keystorePass Password del KeyStore in input
+     * @throws IOException
+     * @throws Exception 
+     */
     public TLSClientBidi(String hostAddr, int port, String keystoreFile, String keystorePass) throws IOException, Exception {
         SSLContext sslContext = createSSLContext(keystoreFile,keystorePass); 
         SSLSocketFactory fact = sslContext.getSocketFactory(); 

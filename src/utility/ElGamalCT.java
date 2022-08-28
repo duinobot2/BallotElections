@@ -2,8 +2,11 @@ package utility;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-// structures for ElGamal Ciphertexts
-// Vincenzo Iovino
+
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Struttura del ciphertext El Gamal
+ */
 
 public class ElGamalCT implements Serializable {
 
@@ -21,6 +24,13 @@ public class ElGamalCT implements Serializable {
 
     }
     
+    /**
+     * @brief Variante di El Gamal che sfrutta l'omomorfismo
+     * @param PK Public Key aggregata
+     * @param CT1 ciphertext 1
+     * @param CT2 ciphertext 2
+     * @return ciphertext aggregato
+     */
     public static ElGamalCT Homomorphism(ElGamalPK PK, ElGamalCT CT1, ElGamalCT CT2) {
         ElGamalCT CT = new ElGamalCT(CT1); // CT=CT1
         CT.C = CT.C.multiply(CT2.C).mod(PK.p);  // CT.C=CT.C*CT2.C mod p

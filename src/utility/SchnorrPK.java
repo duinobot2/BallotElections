@@ -3,6 +3,10 @@ package utility;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Public Key di Schnorr
+ */
 public class SchnorrPK implements Serializable{
 
     BigInteger g, h, p, q;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servers;
 
 import java.io.IOException;
@@ -18,26 +13,36 @@ import utility.TLSClientBidi;
 import utility.Utils;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint
  */
 public class SDealer {
 
     /**
-     * @param args the command line arguments
+     * @brief Il Server Dealer si occupa di generare le share di SK che serviranno per decifrare
+     * con Threshold El Gamal Decryption e la PK inerente per permettere, a ogni
+     * elettore, di votare.
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
+        
+        // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDealer.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "dealer");
         System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreDealer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "dealer");
         
+        // Generazione (PK, SK)
         ElGamalGen generator = new ElGamalGen(512);
         
-        int[] secretPorts= {4000,4001,4002,6000};
+        /*
+        Inizializzazione Porte di Connessione:
+            4000, 4001, 4002: SUrne
+            6000: SDecif
+        */
+        int[] secretPorts= {4000,4001,4002,6000}; 
         ElGamalPK[] PKs= new ElGamalPK[secretPorts.length];
         Schnorr signer = new Schnorr(256);
         
+        // Generazione & Invio delle Share
         for(int i=0;i<secretPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", secretPorts[i]);
 
@@ -61,14 +66,22 @@ public class SDealer {
             SUrna.getcSock().close();
         }
         
+        // Generazione PK generale partendo dalle parziali
         ElGamalPK PK = generator.aggregatePartialPublicKeys(PKs);
         
+        /*
+        Invio della PK a:
+            4000, 4001, 4002: SUrne [omomorfismo]
+            5000: SVote 
+            6000: SDecif [omomorfismo]
+        */
         int[] publicPorts= {4000,4001,4002,5000,6000};
         
+        // Invio della PK
         for(int i=0;i<publicPorts.length;i++){
-            TLSClientBidi SVote = new TLSClientBidi("localhost", publicPorts[i]);
-            ObjectOutputStream out = new ObjectOutputStream(SVote.getcSock().getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(SVote.getcSock().getInputStream());
+            TLSClientBidi server = new TLSClientBidi("localhost", publicPorts[i]);
+            ObjectOutputStream out = new ObjectOutputStream(server.getcSock().getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(server.getcSock().getInputStream());
             out.writeObject(PK);
             int x = in.readInt();
             if(x==1)
@@ -78,7 +91,7 @@ public class SDealer {
 
             out.close();
             in.close();
-            SVote.getcSock().close();
+            server.getcSock().close();
         }
     }
     

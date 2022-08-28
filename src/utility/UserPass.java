@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utility;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint
+ * @brief Classe rappresentante la coppia ID, password
  */
 public class UserPass implements Serializable{
     private String username;

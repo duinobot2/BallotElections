@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servers;
 
 import java.io.IOException;
@@ -14,24 +9,27 @@ import utility.SchnorrSig;
 import utility.TLSServerBidi;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint
  */
 public class SBacheca {
 
     /**
-     * @param args the command line arguments
+     * @brief Il Server Bacheca riceve le firme dai server urna e le pubblica solo dopo l'annuncio del risultato finale
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        // TODO code application logic here
+        
+        // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreBacheca.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "bacheca");
         System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreBacheca.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "bacheca");
         
         ArrayList<SchnorrSig> signatureList = new ArrayList<>();
+        
+        // Inizializzazione bacheca in modalità server
         TLSServerBidi conn = new TLSServerBidi(7001);
         
+        // Ricezione firme da parte delle urne e attesa segnale di stop
         while (true) {
             SSLSocket socket = conn.accept();
 
@@ -40,7 +38,7 @@ public class SBacheca {
             String check = in.readUTF();
             System.out.println(check);
             
-            if (check.equals("surnaadd")) {
+            if (check.equals("surnaadd")) { // Connessione con le urne
                 if(conn.verifyIdentity(socket.getSession(), "CN=surna,OU=CEN,L=Campania")){
                     int numSign=in.readInt();
                     for(int i=0;i<numSign;i++)
@@ -51,7 +49,7 @@ public class SBacheca {
                 out.close();
                 in.close();
                 socket.close();
-            }else if(check.equals("stop")){
+            }else if(check.equals("stop")){ // Connessione con SDecif
                 boolean idCheck=conn.verifyIdentity(socket.getSession(), "CN=sdecif,OU=CEN,L=Campania");
                 out.close();
                 in.close();
@@ -64,6 +62,7 @@ public class SBacheca {
             
         }
         
+        // Pubblicazione firme sulla bacheca
         System.out.println("Stampa bacheca:");
         for(SchnorrSig sig : signatureList){
             System.out.println(sig);

@@ -2,6 +2,10 @@ package utility;
 
 import java.math.BigInteger;
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Secret Key di Schnorr
+ */
 public class SchnorrSK {
 
     BigInteger s;

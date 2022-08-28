@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package servers;
 
 import java.io.IOException;
@@ -21,22 +16,23 @@ import utility.TLSServerBidi;
 import utility.Utils;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint
  */
 public class SDecif {
 
     /**
-     * @param args the command line arguments
+     * @brief Il Server Decifratore si occupa di calcolare il Ciphertext finale, di completare la decifratura
+     * e di annunciare il risultato finale
      */
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
-        // TODO code application logic here
+        
+        // Setting di KeyStore e TrustStore 
         System.setProperty("javax.net.ssl.keyStore", ".\\cert\\keystoreDecifer.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "decifer");
         System.setProperty("javax.net.ssl.trustStore", ".\\cert\\truststoreDecifer.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "decifer");
         
-        
+        // Inizializzazione SDecif in modalitò server
         TLSServerBidi conn = new TLSServerBidi(6000);
 
         SSLSocket socket = conn.acceptAndCheckClient("CN=sdealer,OU=CEN,L=Campania");
@@ -44,6 +40,7 @@ public class SDecif {
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         
+        // Verifica della firma sulla share della SK
         PacketShareSK packet = (PacketShareSK) in.readObject();
         if(!Schnorr.verify(packet.getSign(), packet.getSignPK(), Utils.toString(Utils.objToByteArray(packet.getSK())))){
             System.out.println("Errore controllo firma");
@@ -60,14 +57,17 @@ public class SDecif {
         
         out.writeBoolean(true);
         
+        // Inizializzazione della decifratura finale
         ElGamalDec finalDec = new ElGamalDec((ElGamalSK)packet.getSK());
-
+        
+        // Invio della PK parziale
         out.writeObject(finalDec.getPK());
 
         out.close();
         in.close();
         socket.close();
         
+        // Connessione al Dealer e lettura della PK aggregata
         socket = conn.acceptAndCheckClient("CN=sdealer,OU=CEN,L=Campania");
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
@@ -79,11 +79,12 @@ public class SDecif {
         in.close();
         socket.close();
         
+        // Attesa fine sessione di voto
         Thread.sleep(30000);
         
-        int[] urnaPorts= {4000,4001,4002};
-        int[] workerPorts= {4000,4001,4002};
+        int[] urnaPorts = {4000,4001,4002};
         
+        // Invio segnale di fine sessione di voto alle urne 
         for(int i=0;i<urnaPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", urnaPorts[i]);
             
@@ -99,7 +100,7 @@ public class SDecif {
         
         ElGamalCT[] partialCTs= new ElGamalCT[urnaPorts.length];
         
-        
+        // Lettura Conteggi Locali delle urne
         for(int i=0;i<urnaPorts.length;i++){
             TLSClientBidi SUrna = new TLSClientBidi("localhost", urnaPorts[i]);
             
@@ -113,6 +114,7 @@ public class SDecif {
             SUrna.getcSock().close();
         }
         
+        // Realizzazione Ciphertext finale
         ElGamalCT finalCT = null;
         for(int i =0;i<partialCTs.length;i++){
             if(i==0)
@@ -121,8 +123,9 @@ public class SDecif {
                 finalCT=ElGamalCT.Homomorphism(PK, finalCT, partialCTs[i]);
         }
         
-        for(int i=0;i<workerPorts.length;i++){
-            TLSClientBidi SUrna = new TLSClientBidi("localhost", workerPorts[i]);
+        // Invio Ciphertext finale alle urne e ricezione delle decifrature parziali
+        for(int i=0;i<urnaPorts.length;i++){
+            TLSClientBidi SUrna = new TLSClientBidi("localhost", urnaPorts[i]);
             
             out = new ObjectOutputStream(SUrna.getcSock().getOutputStream());
             in = new ObjectInputStream(SUrna.getcSock().getInputStream());
@@ -136,9 +139,11 @@ public class SDecif {
             SUrna.getcSock().close();
         }
         
+        // Decifratura finale e annuncio risultato finale
         BigInteger RESULT=finalDec.decryptInTheExponent(finalCT);
         System.out.println("Il risultato della votazione è: "+RESULT);
         
+        // Invio segnale di fine sessione alla bacheca per la pubblicazione
         TLSClientBidi SBacheca = new TLSClientBidi("localhost", 7001);
             
         out = new ObjectOutputStream(SBacheca.getcSock().getOutputStream());

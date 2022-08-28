@@ -2,9 +2,11 @@ package utility;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-//structures for ElGamal secret-key
-//Vincenzo Iovino
 
+/**
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief El Gamal Secret Key
+ */
 public class ElGamalSK implements Serializable { // Secret-key of El Gamal
 
     BigInteger s;

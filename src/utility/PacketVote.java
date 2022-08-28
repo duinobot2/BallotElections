@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utility;
 
 import java.io.Serializable;
 
 /**
- *
- * @author En¿gma
+ * @author H¿ddεnBreakpoint
+ * @brief Pacchetto contenente voto cifrato, firma e PK dell'elettore
  */
 public class PacketVote implements Serializable{
     private ElGamalCT CT;

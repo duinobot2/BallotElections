@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package utility;
 
 import java.math.BigInteger;
@@ -10,8 +5,8 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 
 /**
- *
- * @author duino
+ * @author H¿ddεnBreakpoint (feat. Vincenzo Iovino)
+ * @brief Classe per firmare
  */
 public class Schnorr {
 
