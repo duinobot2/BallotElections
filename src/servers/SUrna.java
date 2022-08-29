@@ -146,7 +146,7 @@ public class SUrna {
                 if(urna.conn.verifyIdentity(socket.getSession(), "CN=svote,OU=CEN,L=Campania")){
                     PacketVote p = (PacketVote) in.readObject();
                     if(Schnorr.verify(p.getSign(), p.getSignPK(), Utils.toString(Utils.objToByteArray(p.getCT())))){
-                        urna.packetVotes.add(p);
+                        urna.packetVotes.add(new PacketVote(p.getCT(), p.getSign(), null));
                         out.writeBoolean(true);
                     }else
                         out.writeBoolean(false);
