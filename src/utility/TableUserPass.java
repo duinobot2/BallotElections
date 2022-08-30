@@ -91,7 +91,7 @@ public class TableUserPass {
     }
     
     /**
-     * @brief Verifica della presenza di ID e password nel database
+     * @brief Verifica della presenza di ID e password nel database e firma non settata
      * @param userPass coppia ID e password
      * @return true se la coppia è presente, altrimenti false
      * @throws NoSuchAlgorithmException 
@@ -99,7 +99,7 @@ public class TableUserPass {
     public boolean containUserPass(UserPass userPass) throws NoSuchAlgorithmException{
         PassSign passSign = getPassSign(userPass);
         
-        return passSign != null;
+        return passSign != null && passSign.getSign()==null;
     }
     
     /**
